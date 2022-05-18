@@ -1,8 +1,8 @@
 const express = require('express');
-const app = express();
+var router = express.Router();
 
-app.use(express.urlencoded({ extended: false })); 
-app.use(express.json());
+router.use(express.urlencoded({ extended: false })); 
+router.use(express.json());
 
 
 var pg = require('pg');
@@ -12,7 +12,7 @@ var conString = 'postgres://kwxxklmjsbpeqs:4411086cc999ba61eb11ec83a22fb515b268a
 const pool = new pg.Pool({connectionString: conString, ssl: {rejectUnauthorized: false}});
 
 //ROTA PRINCIPAL
-app.get('/', (req, res) =>{
+router.get('/', (req, res) =>{
     pool.connect((err, product)=>{
         if (err){
             return res.status(401).send('Não foi possível conectar')
@@ -22,7 +22,7 @@ app.get('/', (req, res) =>{
 })
 
 //CADASTRO DE NOVOS PRODUTOS
-app.post('/cadprodutos', (req, res) => {
+router.post('/cadprodutos', (req, res) => {
     pool.connect((err, product) =>{
         if (err) {
             return res.status(401).send('Conexão nao autorizada')
@@ -57,7 +57,7 @@ app.post('/cadprodutos', (req, res) => {
 })
 
 //LISTANDO PRODUTOS
-app.get('/produtos', (req, res) => {
+router.get('/produtos', (req, res) => {
     pool.connect((err, product) => {
         if(err){
             res.status(401).send('Conexão não autorizada')
@@ -74,7 +74,7 @@ app.get('/produtos', (req, res) => {
 
 //PESQUISA DE PRODUTO POR ID
 //(tentar add um aviso caso nao exista o id buscado)
-app.get('/produtos/:id', (req, res) =>{
+router.get('/produtos/:id', (req, res) =>{
     pool.connect((err, product) => {
         if (err) {
             return res.status(401).send('Conexão não autorizada')
@@ -89,7 +89,7 @@ app.get('/produtos/:id', (req, res) =>{
 })
 
 //DELETAR PRODUTOS
-app.delete('/cadprodutos/:id', (req, res) =>{
+router.delete('/cadprodutos/:id', (req, res) =>{
     pool.connect((err, product) => {
         if (err) {
            return res.status(401).send('Conexão não autorizada')
@@ -106,7 +106,7 @@ app.delete('/cadprodutos/:id', (req, res) =>{
 })
 
 //UPDATE DE PRODUTOS
-app.put('/cadprodutos/:id', (req, res) => {
+router.put('/cadprodutos/:id', (req, res) => {
     pool.connect((err, product) =>{
         if (err){
             return res.status(401).send('Conexão não autorizada')
@@ -137,5 +137,7 @@ app.put('/cadprodutos/:id', (req, res) => {
         })
     })
 })
+module.exports = router;
 
-app.listen(8081, () => console.log('aplicação em execução na url http://localhost:8081'));
+
+//app.listen(8081, () => console.log('aplicação em execução na url http://localhost:8081'));

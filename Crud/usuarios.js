@@ -1,12 +1,13 @@
 const express = require('express');
-const app = express();
+var router = express.Router();
+
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
 const pg = require('pg');
 
 
-app.use(express.urlencoded({ extended: false })); 
-app.use(express.json());
+router.use(express.urlencoded({ extended: false })); 
+router.use(express.json());
 
 
 var conString = 'postgres://kwxxklmjsbpeqs:4411086cc999ba61eb11ec83a22fb515b268a66024f1f4190b0f7b8baf4fccdc@ec2-3-224-164-189.compute-1.amazonaws.com:5432/df0s14c56o9oun';
@@ -14,7 +15,7 @@ var conString = 'postgres://kwxxklmjsbpeqs:4411086cc999ba61eb11ec83a22fb515b268a
 const pool = new pg.Pool({connectionString: conString, ssl: {rejectUnauthorized: false}});
 
 //rota principal
-app.get('/', (req, res) => {
+router.get('/', (req, res) => {
     pool.connect((err, client) => {
         if (err) {
             return res.status(401).send('Não foi possível conectar')
@@ -24,7 +25,7 @@ app.get('/', (req, res) => {
 })
 
 //cadastrar
-app.post('/cadusuarios', (req, res) => {
+router.post('/cadusuarios', (req, res) => {
     pool.connect((err, client) => {
         if (err) {
             return res.status(401).send('Conexão nao autorizada')
@@ -67,7 +68,7 @@ app.post('/cadusuarios', (req, res) => {
 
 
 //listando perfis cadastrados
-app.get('/usuarios', (req, res) => {
+router.get('/usuarios', (req, res) => {
     pool.connect((err, client) => {
         if (err) {
            return res.status(401).send('Conexão não autorizada')
@@ -83,7 +84,7 @@ app.get('/usuarios', (req, res) => {
 })
 
 //consulta de perfis por id
-app.get('/usuarios/:id', (req, res) => {
+router.get('/usuarios/:id', (req, res) => {
     pool.connect((err, client) => {
         if (err) {
             return res.status(401).send('Conexão não autorizada')
@@ -99,7 +100,7 @@ app.get('/usuarios/:id', (req, res) => {
 
 
 //update
-app.put('/usuarios/:id', (req, res) => {
+router.put('/usuarios/:id', (req, res) => {
     pool.connect((err, client) => {
         if (err) {
             return res.status(401).send('Conexão não autorizada')
@@ -132,7 +133,7 @@ app.put('/usuarios/:id', (req, res) => {
 })
 
 //metodo deletar
-app.delete('/usuarios/:id', (req, res) => {
+router.delete('/usuarios/:id', (req, res) => {
     pool.connect((err, client) => {
         if (err) {
             return res.status(401).send('Conexão não autorizada')
@@ -152,7 +153,7 @@ app.delete('/usuarios/:id', (req, res) => {
 
 
 //login
-app.post('/usuarios/login', (req, res) => {
+router.post('/usuarios/login', (req, res) => {
     //res.status(200).send('buscar usuário')
     pool.connect((err, client) => {
         if (err) {
@@ -192,4 +193,8 @@ app.post('/usuarios/login', (req, res) => {
         })
     })
 })
-app.listen(8081, () => console.log('aplicação em execução na url http://localhost:8081'));
+
+module.exports = router;
+
+
+//app.listen(8081, () => console.log('aplicação em execução na url http://localhost:8081'));
